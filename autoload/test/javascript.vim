@@ -4,11 +4,21 @@ let test#javascript#patterns = {
 \}
 
 function! test#javascript#has_package(package) abort
-  for line in readfile('package.json')
-    if line =~ '"'.a:package.'"'
-      return 1
-    endif
-  endfor
+  if filereadable('package.json')
+    for line in readfile('package.json')
+      if line =~ '"'.a:package.'"'
+        return 1
+      endif
+    endfor
+  endif
+
+  if filereadable('.vim-test')
+    for line in readfile('.vim-test')
+      if line =~ '"'.a:package.'"'
+        return 1
+      endif
+    endfor
+  endif
 
   return 0
 endfunction
