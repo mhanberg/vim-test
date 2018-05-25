@@ -115,6 +115,11 @@ function! test#determine_runner(file) abort
   for [language, runners] in items(g:test#runners)
     for runner in runners
       let runner = tolower(language).'#'.tolower(runner)
+      if exists("g:test#enabled_runners")
+        if index(g:test#enabled_runners, runner) < 0
+          continue
+        endif
+      endif
       if test#base#test_file(runner, fnamemodify(a:file, ':.'))
         return runner
       endif
@@ -127,6 +132,7 @@ function! test#test_file(file) abort
 endfunction
 
 function! s:alternate_file() abort
+  if get(g:, 'test#no_alternate') | return '' | endif
   let alternate_file = ''
 
   if empty(alternate_file) && exists('g:loaded_projectionist')
